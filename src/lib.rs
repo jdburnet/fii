@@ -1,3 +1,8 @@
+extern crate toml;
+#[macro_use]
+extern crate serde_derive;
+
+#[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 struct Month {
     name: String,
     income: u32,
@@ -20,6 +25,7 @@ impl Month {
     }
 }
 
+#[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 struct Year {
     id: u16,
     months: Vec<Month>,
@@ -43,6 +49,31 @@ mod tests {
     const INVESTMENTS: u32 = 1_234_567;
     const YEAR: u16 = 2018;
     const MONTHLY_WITHDRAWL: u8 = 4;
+
+    #[test]
+    fn month_equality() {
+        let m = Month::new(
+            String::from("january"),
+            INCOME,
+            EXPENSES,
+            INVESTMENTS,
+        );
+        assert_eq!(m, m);
+    }
+
+    #[test]
+    fn toml_serde_month_unity() {
+        let m = Month::new(
+            String::from("january"),
+            INCOME,
+            EXPENSES,
+            INVESTMENTS,
+        );
+        let m_ser = toml::to_string(&m).unwrap();
+        let m_de = toml::from_str(&m_ser).unwrap();
+
+        assert_eq!(m, m_de)
+    }
 
     #[test]
     fn calc_investment_income_4_is_ok() {
@@ -77,6 +108,21 @@ mod tests {
             INVESTMENTS,
         );
         assert_eq!(m.income, INCOME);
+    }
+
+    #[test]
+    fn year_equality() {
+        let y = Year::new(YEAR);
+        assert_eq!(y, y);
+    }
+
+    #[test]
+    fn toml_serde_year_unity() {
+        let y = Year::new(YEAR);
+        let y_ser = toml::to_string(&y).unwrap();
+        let y_de = toml::from_str(&y_ser).unwrap();
+
+        assert_eq!(y, y_de);
     }
 
     #[test]
