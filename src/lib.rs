@@ -14,6 +14,10 @@ impl Month {
             investments: inv,
         }
     }
+
+    fn investment_income(&self, percent: u8) -> f64 {
+        f64::from(self.investments) / 100. * f64::from(percent)
+    }
 }
 
 struct Year {
@@ -39,6 +43,19 @@ mod tests {
     const INVESTMENTS: u32 = 1_234_567;
     const YEAR: u16 = 2018;
     const MONTHLY_WITHDRAWL: u8 = 4;
+
+    #[test]
+    fn calc_investment_income_4_is_ok() {
+        let m = Month::new(
+            String::from("january"),
+            INCOME,
+            EXPENSES,
+            INVESTMENTS,
+        );
+        let invinc = m.investment_income(MONTHLY_WITHDRAWL);
+        let exp = f64::from(INVESTMENTS) / 100. * f64::from(MONTHLY_WITHDRAWL);
+        assert_eq!(invinc, exp);
+    }
 
     #[test]
     fn make_month() {
