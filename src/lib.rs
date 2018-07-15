@@ -34,40 +34,46 @@ impl Year {
 mod tests {
     use super::*;
 
+    const INCOME: u32 = 12_345;
+    const EXPENSES: u16 = 6_789;
+    const INVESTMENTS: u32 = 1_234_567;
+    const YEAR: u16 = 2018;
+    const MONTHLY_WITHDRAWL: u8 = 4;
+
     #[test]
     fn make_month() {
         let m = Month {
             name: String::from("january"),
-            income: 12_345,
-            expenses: 6_789,
-            investments: 1_234_567,
+            income: INCOME,
+            expenses: EXPENSES,
+            investments: INVESTMENTS,
         };
-        assert_eq!(m.income, 12_345);
+        assert_eq!(m.income, INCOME);
     }
 
     #[test]
     fn make_month_new() {
         let m = Month::new(
             String::from("january"),
-            12_345,
-            6_789,
-            1_234_567,
+            INCOME,
+            EXPENSES,
+            INVESTMENTS,
         );
-        assert_eq!(m.income, 12_345);
+        assert_eq!(m.income, INCOME);
     }
 
     #[test]
     fn make_year() {
         let y = Year {
-            id: 2018,
+            id: YEAR,
             months: Vec::new(),
         };
-        assert_eq!(y.id, 2018);
+        assert_eq!(y.id, YEAR);
     }
 
     #[test]
     fn make_year_new() {
-        let y = Year::new(2018);
-        assert_eq!(y.id, 2018);
+        let y = Year::new(YEAR);
+        assert_eq!(y.id, YEAR);
     }
 }
