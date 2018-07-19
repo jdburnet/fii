@@ -1,5 +1,7 @@
+extern crate app_dirs;
 extern crate toml;
 #[macro_use]
 extern crate serde_derive;
 
-mod store;
+mod core;
+mod save;
