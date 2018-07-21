@@ -1,8 +1,15 @@
 use std::fs::File;
+use std::io;
 use std::io::prelude::*;
 
 use app_dirs::*;
 
+const APP: AppInfo = AppInfo{ name: "fii", author: "na" };
+
+fn save(f: &mut File, contents: &str) -> io::Result<()> {
+    f.write_all(contents.as_bytes())?;
+    Ok(())
+}
 
 #[cfg(test)]
 mod tests {
@@ -10,7 +17,6 @@ mod tests {
     use std::env::temp_dir;
     use std::hash::{Hash, Hasher};
     use std::time::SystemTime;
-    use std::path::Path;
 
     use app_dirs::*;
 
@@ -35,8 +41,8 @@ mod tests {
         hasher.finish()
     }
 
-    fn contents_equal(_path: &str, exp: String) -> bool {
-        let f = File::open(_path).unwrap();
+    fn contents_equal(_path: &str, exp: &str) -> bool {
+        let mut f = File::open(_path).unwrap();
         let mut contents = String::new();
         f.read_to_string(&mut contents).unwrap();
         contents == exp
@@ -44,10 +50,11 @@ mod tests {
 
     #[test]
     fn save_saves() {
-        let p = temp_dir().as_path();
-        let file = File::create(p).unwrap();
+        let mut p = temp_dir();
+        p.push(&APP.name);
+        let mut file = File::create(p.as_path()).unwrap();
         let contents = time_seed().to_string();
-        save(file, contents);
-        assert!(contents_equal(p.to_str().unwrap(), contents));
+        save(&mut file, &contents);
+        assert!(contents_equal(p.to_str().unwrap(), &contents));
     }
 }
