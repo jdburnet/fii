@@ -4,9 +4,9 @@ use std::io::prelude::*;
 
 use app_dirs::*;
 
-const APP: AppInfo = AppInfo{ name: "fii", author: "na" };
+pub const APP: AppInfo = AppInfo{ name: "fii", author: "na" };
 
-fn save(f: &mut File, contents: &str) -> io::Result<()> {
+pub fn save(f: &mut File, contents: &str) -> io::Result<()> {
     f.write_all(contents.as_bytes())?;
     Ok(())
 }

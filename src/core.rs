@@ -1,5 +1,5 @@
 #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
-struct Month {
+pub struct Month {
     name: String,
     income: u32,
     expenses: u16,
@@ -22,7 +22,7 @@ impl Month {
 }
 
 #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
-struct Year {
+pub struct Year {
     id: u16,
     months: Vec<Month>,
 }
