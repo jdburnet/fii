@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
+use std::path::Path;
 
 use app_dirs::*;
 
@@ -11,11 +12,19 @@ pub fn save(f: &mut File, contents: &str) -> io::Result<()> {
     Ok(())
 }
 
+pub fn load(_path: &str) -> io::Result<String> {
+    let mut f = File::open(_path)?;
+    let mut contents = String::new();
+    f.read_to_string(&mut contents)?;
+    Ok(contents)
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::hash_map::DefaultHasher;
     use std::env::temp_dir;
     use std::hash::{Hash, Hasher};
+    use std::path::PathBuf;
     use std::time::SystemTime;
 
     use app_dirs::*;
@@ -42,19 +51,31 @@ mod tests {
     }
 
     fn contents_equal(_path: &str, exp: &str) -> bool {
-        let mut f = File::open(_path).unwrap();
-        let mut contents = String::new();
-        f.read_to_string(&mut contents).unwrap();
+        let contents = load(_path).unwrap();
         contents == exp
+    }
+
+    fn test_file(_path: &mut PathBuf) -> File {
+        _path.push(&time_seed().to_string());
+        File::create(_path.as_path()).unwrap()
     }
 
     #[test]
     fn save_saves() {
         let mut p = temp_dir();
-        p.push(&APP.name);
-        let mut file = File::create(p.as_path()).unwrap();
+        let mut file = test_file(&mut p);
         let contents = time_seed().to_string();
         save(&mut file, &contents);
         assert!(contents_equal(p.to_str().unwrap(), &contents));
+    }
+
+    #[test]
+    fn load_loads() {
+        let mut p = temp_dir();
+        let mut file = test_file(&mut p);
+        let exp = time_seed().to_string();
+        save(&mut file, &exp);
+        let contents = load(p.to_str().unwrap());
+        assert_eq!(exp, contents.unwrap());
     }
 }
