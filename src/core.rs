@@ -3,10 +3,10 @@ use std::fmt;
 
 #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub struct Month {
-    name: String,
-    income: u32,
-    expenses: u16,
-    investments: u32,
+    pub name: String,
+    pub income: u32,
+    pub expenses: u16,
+    pub investments: u32,
 }
 
 impl Month {
@@ -28,7 +28,7 @@ impl fmt::Display for Month {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "{:9}: inc={:6.2} exp={:6.2} inv={:6.2} invinc={:6.2}",
+            "{}: inc={:<6.2} exp={:<6.2} inv={:<6.2} invinc={:<6.2}",
             self.name, self.income, self.expenses,
             self.investments, self.investment_income(4)
         )
@@ -37,7 +37,7 @@ impl fmt::Display for Month {
 
 #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub struct Year {
-    id: u16,
+    pub id: u16,
     months: Vec<Month>,
 }
 
@@ -62,7 +62,7 @@ impl fmt::Display for Year {
 
 #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub struct History {
-    years: Vec<Year>,
+    pub years: Vec<Year>,
 }
 
 impl History {
@@ -72,6 +72,18 @@ impl History {
 
     pub fn add_year(&mut self, y: Year) {
         self.years.push(y);
+    }
+
+    pub fn show_year(&self, year: u16) -> fmt::Result {
+        for y in &self.years {
+            if y.id == year {
+                println!("{}", y);
+                for m in &y.months {
+                    println!("  {}", m);
+                }
+            }
+        }
+        Ok(())
     }
 }
 
