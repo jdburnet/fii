@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub struct Month {
     name: String,
@@ -21,6 +23,17 @@ impl Month {
     }
 }
 
+impl fmt::Display for Month {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{:9}: inc={:6.2} exp={:6.2} inv={:6.2} invinc={:6.2}",
+            self.name, self.income, self.expenses,
+            self.investments, self.investment_income(4)
+        )
+    }
+}
+
 #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub struct Year {
     id: u16,
@@ -33,6 +46,23 @@ impl Year {
             id: year,
             months: Vec::new(),
         }
+    }
+}
+
+impl fmt::Display for Year {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.id)
+    }
+}
+
+#[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
+struct History {
+    years: Vec<Year>,
+}
+
+impl History {
+    fn new() -> History {
+        History{ years: Vec::new() }
     }
 }
 
@@ -135,6 +165,22 @@ mod tests {
     #[test]
     fn make_year_new() {
         let y = Year::new(YEAR);
-        assert_eq!(y.id, YEAR);
+        assert_eq!(y.id, YEAR)
+    }
+
+    #[test]
+    fn toml_serde_history_unity() {
+        let y = Year::new(YEAR);
+        let mut h = History::new();
+        h.years.push(y);
+        let h_ser = toml::to_string(&h).unwrap();
+        let h_de = toml::from_str(&h_ser).unwrap();
+
+        assert_eq!(h, h_de)
+    }
+
+    #[test]
+    fn make_history_new() {
+        History::new();
     }
 }
