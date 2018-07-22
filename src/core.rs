@@ -56,7 +56,7 @@ mod tests {
             EXPENSES,
             INVESTMENTS,
         );
-        assert_eq!(m, m);
+        assert_eq!(m, m)
     }
 
     #[test]
@@ -83,7 +83,7 @@ mod tests {
         );
         let invinc = m.investment_income(MONTHLY_WITHDRAWL);
         let exp = f64::from(INVESTMENTS) / 100. * f64::from(MONTHLY_WITHDRAWL);
-        assert_eq!(invinc, exp);
+        assert_eq!(invinc, exp)
     }
 
     #[test]
@@ -94,7 +94,7 @@ mod tests {
             expenses: EXPENSES,
             investments: INVESTMENTS,
         };
-        assert_eq!(m.income, INCOME);
+        assert_eq!(m.income, INCOME)
     }
 
     #[test]
@@ -105,13 +105,13 @@ mod tests {
             EXPENSES,
             INVESTMENTS,
         );
-        assert_eq!(m.income, INCOME);
+        assert_eq!(m.income, INCOME)
     }
 
     #[test]
     fn year_equality() {
         let y = Year::new(YEAR);
-        assert_eq!(y, y);
+        assert_eq!(y, y)
     }
 
     #[test]
@@ -120,7 +120,7 @@ mod tests {
         let y_ser = toml::to_string(&y).unwrap();
         let y_de = toml::from_str(&y_ser).unwrap();
 
-        assert_eq!(y, y_de);
+        assert_eq!(y, y_de)
     }
 
     #[test]
@@ -129,7 +129,7 @@ mod tests {
             id: YEAR,
             months: Vec::new(),
         };
-        assert_eq!(y.id, YEAR);
+        assert_eq!(y.id, YEAR)
     }
 
     #[test]
