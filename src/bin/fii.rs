@@ -1,7 +1,14 @@
+extern crate clap;
+
 extern crate fii;
+
+use clap::{App, SubCommand};
 
 use fii::core::{Year, Month, History};
 use fii::data::{APP, save};
+
+const ADDMONTH: &str = "add-month";
+const SHOWMONTH: &str = "show-month";
 
 fn start_new(y: Year) -> History {
     let mut h = History::new();
@@ -10,18 +17,26 @@ fn start_new(y: Year) -> History {
 }
 
 fn main() {
-    let jan = Month::new(String::from("jan"), 123, 456, 789);
-    let mut year = Year::new(2018);
-    year.add_month(jan);
-    let hist = start_new(year);
+    let args = App::new("fii")
+        .about("Track your FI progress")
+        .subcommand(SubCommand::with_name(ADDMONTH)
+            .about("input information about a given month"))
+        .subcommand(SubCommand::with_name(SHOWMONTH)
+            .about("show information about a given month"))
+        .get_matches();
 
-    hist.show_year(2018).expect("unable to show year");
+    // TODO get help out of app and then get matches
+    // use print help message if no subcommand is given
+
+    match args.subcommand() {
+        (ADDMONTH, Some(matches)) => {},
+        (SHOWMONTH, Some(matches)) => {},
+        _ => println!("{}", args.usage()),
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use std::panic;
-
     use fii::{TEST_INCOME, TEST_EXPENSES, TEST_INVESTMENTS, TEST_YEAR};
 
     use super::*;
