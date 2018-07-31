@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
@@ -13,7 +13,11 @@ pub fn save(f: &mut File, contents: &str) -> io::Result<()> {
 }
 
 pub fn load(_path: &str) -> io::Result<String> {
-    let mut f = File::open(_path)?;
+    let mut f = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(_path)?;
     let mut contents = String::new();
     f.read_to_string(&mut contents)?;
     Ok(contents)

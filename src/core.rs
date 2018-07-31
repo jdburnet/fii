@@ -4,13 +4,13 @@ use std::fmt;
 #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub struct Month {
     pub name: String,
-    pub income: u32,
-    pub expenses: u16,
-    pub investments: u32,
+    pub income: i32,
+    pub expenses: i32,
+    pub investments: i32,
 }
 
 impl Month {
-    pub fn new(name: String, inc: u32, exp: u16, inv: u32) -> Month {
+    pub fn new(name: String, inc: i32, exp: i32, inv: i32) -> Month {
         Month {
             name: name,
             income: inc,
@@ -19,7 +19,7 @@ impl Month {
         }
     }
 
-    pub fn investment_income(&self, percent: u8) -> f64 {
+    pub fn investment_income(&self, percent: i32) -> f64 {
         f64::from(self.investments) / 100. * f64::from(percent)
     }
 }
@@ -37,12 +37,12 @@ impl fmt::Display for Month {
 
 #[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub struct Year {
-    pub id: u16,
-    months: Vec<Month>,
+    pub id: i32,
+    pub months: Vec<Month>,
 }
 
 impl Year {
-    pub fn new(year: u16) -> Year {
+    pub fn new(year: i32) -> Year {
         Year {
             id: year,
             months: Vec::new(),
@@ -50,6 +50,8 @@ impl Year {
     }
 
     pub fn add_month(&mut self, m: Month) {
+        // overwrite month if already exists
+        self.months.retain(|x| x.name != m.name);
         self.months.push(m);
     }
 }
@@ -74,7 +76,7 @@ impl History {
         self.years.push(y);
     }
 
-    pub fn show_year(&self, year: u16) -> fmt::Result {
+    pub fn show_year(&self, year: i32) -> fmt::Result {
         for y in &self.years {
             if y.id == year {
                 println!("{}", y);
