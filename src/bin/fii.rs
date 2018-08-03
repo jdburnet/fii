@@ -33,15 +33,15 @@ fn get_datapath(datafile: &str) -> PathBuf {
     datapath
 }
 
-fn load_history(datafile: &str) -> History {
-    match load(get_datapath(datafile).to_str().unwrap()) {
+fn load_history(datafile: &PathBuf) -> History {
+    match load(datafile.to_str().unwrap()) {
         Err(e) => panic!("unable to load data file: {:?}", e),
         Ok(ref s) if *s == String::from("") => start_new(),
         Ok(s) => toml::from_str(&s).expect("data file has been corrupted"),
     }
 }
 
-fn add_month(year_id: i32, m: Month, datafile: &str) -> io::Result<()> {
+fn insert_month(year_id: i32, m: Month, datafile: &PathBuf) -> io::Result<()> {
     let mut hist = load_history(datafile);
     let mut y = match hist.years.iter().position(|year| year.id == year_id) {
         Some(idx) => hist.years.remove(idx),
@@ -49,7 +49,7 @@ fn add_month(year_id: i32, m: Month, datafile: &str) -> io::Result<()> {
     };
     y.add_month(m);
     hist.add_year(y);
-    let mut datafile = File::create(get_datapath(datafile).to_str().unwrap())
+    let mut datafile = File::create(datafile.to_str().unwrap())
         .expect("unable to create data file");
     save(&mut datafile, &toml::to_string(&hist).unwrap())
 }
@@ -93,11 +93,29 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::hash_map::DefaultHasher;
+    use std::env::temp_dir;
+    use std::hash::{Hash, Hasher};
+    use std::time::SystemTime;
+
     use fii::{TEST_INCOME, TEST_EXPENSES, TEST_INVESTMENTS, TEST_YEAR};
 
     use super::*;
 
     const TESTFILE: &str = "test";
+
+    fn time_seed() -> u64 {
+        let now = SystemTime::now();
+        let mut hasher = DefaultHasher::new();
+        now.hash(&mut hasher);
+        hasher.finish()
+    }
+
+    fn test_path() -> PathBuf {
+        let mut p = temp_dir();
+        p.push(&time_seed().to_string());
+        p
+    }
 
     fn get_month(n: String) -> Month {
         Month::new(
@@ -124,19 +142,34 @@ mod tests {
 
     #[test]
     fn add_one_month() {
+        let p = test_path();
         let jan = get_month(String::from("jan"));
-        add_month(TEST_YEAR, jan, TESTFILE);
-        let h = load_history(TESTFILE);
+        insert_month(TEST_YEAR, jan, &p);
+        let h = load_history(&p);
         assert_eq!(h.years[0].months.len(), 1)
     }
 
     #[test]
     fn add_two_months() {
+        let p = test_path();
         let jan = get_month(String::from("jan"));
-        add_month(TEST_YEAR, jan, TESTFILE);
+        insert_month(TEST_YEAR, jan, &p);
         let feb = get_month(String::from("feb"));
-        add_month(TEST_YEAR, feb, TESTFILE);
-        let h = load_history(TESTFILE);
+        insert_month(TEST_YEAR, feb, &p);
+        let h = load_history(&p);
         assert_eq!(h.years[0].months.len(), 2)
+    }
+
+    #[test]
+    fn add_new_year() {
+        let p = test_path();
+        let jan = get_month(String::from("jan"));
+        insert_month(TEST_YEAR, jan, &p);
+        let jan = get_month(String::from("jan"));
+        insert_month(TEST_YEAR + 1, jan, &p);
+        let h = load_history(&p);
+        assert_eq!(h.years.len(), 2);
+        assert_eq!(h.years[0].months.len(), 1);
+        assert_eq!(h.years[1].months.len(), 1);
     }
 }
