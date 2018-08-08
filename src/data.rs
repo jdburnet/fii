@@ -1,7 +1,6 @@
 use std::fs::{File, OpenOptions};
 use std::io;
 use std::io::prelude::*;
-use std::path::Path;
 
 use app_dirs::*;
 
@@ -69,7 +68,7 @@ mod tests {
         let mut p = temp_dir();
         let mut file = test_file(&mut p);
         let contents = time_seed().to_string();
-        save(&mut file, &contents);
+        save(&mut file, &contents).unwrap();
         assert!(contents_equal(p.to_str().unwrap(), &contents));
     }
 
@@ -78,7 +77,7 @@ mod tests {
         let mut p = temp_dir();
         let mut file = test_file(&mut p);
         let exp = time_seed().to_string();
-        save(&mut file, &exp);
+        save(&mut file, &exp).unwrap();
         let contents = load(p.to_str().unwrap());
         assert_eq!(exp, contents.unwrap());
     }

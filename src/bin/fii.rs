@@ -94,7 +94,8 @@ fn main() {
                 value_t!(matches, "investments", i32).unwrap(),
             );
             let datapath = get_datapath(DATAFILE);
-            insert_month(value_t!(matches, "year", i32).unwrap(), m, &datapath);
+            insert_month(value_t!(matches, "year", i32).unwrap(), m, &datapath)
+                .unwrap();
         },
         (SHOWMONTH, Some(matches)) => {
             let datapath = get_datapath(DATAFILE);
