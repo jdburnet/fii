@@ -4,3 +4,19 @@ version = "0.1.0"
 authors = ["Jackson Burnette <jacksondburnette@gmail.com>"]
 
 [dependencies]
+app_dirs = "1.2.1"
+clap = "2.31.2"
+serde = "1.0"
+serde_derive = "1.0"
+time = "0.1"
+toml = "0.4.6"
+
+[[bin]]
+name = "fii"
+path = "src/bin/fii.rs"
+test = false
+doctest = false
+bench = false
+plugin = false
+proc-macro = false
+harness = false
