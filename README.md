@@ -11,7 +11,7 @@ point](https://www.getrichslowly.org/crossover-point/) and beyond.
 ## Installation
 
 Make sure that you have the [rust
-compiler](https://doc.rust-lang.org/book/second-edition/ch01-1-installation.html) and [cargo] (https://doc.rust-lang.org/cargo/getting-started/installation.html) installed.
+compiler](https://doc.rust-lang.org/book/second-edition/ch01-1-installation.html) and [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html) installed.
 
 Install fii,
 
